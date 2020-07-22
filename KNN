@@ -1,0 +1,37 @@
+import sklearn
+from sklearn.utils import shuffle
+from sklearn.neighbors import KNeighborsClassifier
+import pandas as pd
+import numpy as np
+from sklearn import linear_model, preprocessing
+
+data = pd.read_csv("car.data") #Read the data using pandas
+print(data) #view the data to ensure it printed properly
+
+le = preprocessing.LabelEncoder() #sklearn tool to used to transform non-numerical labels to numerical labels
+buying = le.fit_transform(data["buying"]) #transform each variable in to a numerical
+maint = le.fit_transform(data["maint"])
+door = le.fit_transform(data["door"])
+persons = le.fit_transform(data["persons"])
+lug_boot = le.fit_transform(data["lug_boot"])
+safety = le.fit_transform(data["safety"])
+cls = le.fit_transform(data["class"])
+print(cls) # class is in a horizontal array so we will have to list them and zip all varibles together to make them back into a normal list
+predict = "class" #predict variable
+
+X = list(zip(buying, maint, door, persons, lug_boot, safety)) #Zip and make them into list , then attach list to X variable
+y = list(cls) #make into a list
+
+x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=0.1) #define testing and training data
+
+model = KNeighborsClassifier(n_neighbors = 9) #type of model used
+
+model.fit(x_train, y_train) #develop model
+acc = model.score(x_test,y_test) #accuracy of model
+print(acc) #print accuracy
+
+predicted = model.predict(x_test)
+names = ["unacc", "acc", "good,","vgood" ]
+
+for x in range(len(predicted)):
+    print("Predicted: ",names[predicted[x]], "Data:", x_test[x] , "Result:", y_test[x])
